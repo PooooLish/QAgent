@@ -1,10 +1,10 @@
-# QAgent 🤖
+# QAgent
 
 A lightweight General QA Agent powered by LLM, supporting document-grounded QA, multi-turn conversation, and tool-augmented reasoning.
 
 ---
 
-## 🚀 Features
+## Features
 
 - General Question Answering  
   Answer common knowledge questions.
@@ -36,7 +36,7 @@ A lightweight General QA Agent powered by LLM, supporting document-grounded QA, 
 
 ---
 
-## 🧠 System Architecture
+## System Architecture
 
 User Query
    ↓
@@ -56,40 +56,40 @@ Query → Retrieve → Context → LLM → Answer
 
 ---
 
-## 📦 Project Structure
-
+## Project Structure
+```
 QAgent/
-├── app.py                 # Streamlit UI
-├── requirements.txt       # Dependencies
+├── app.py # Streamlit UI
+├── requirements.txt # Dependencies
 ├── README.md
 │
 ├── agent/
-│   ├── llm.py             # OpenAI client
-│   ├── memory.py          # Conversation memory
-│   ├── prompts.py         # Prompt templates
-│   ├── router.py          # Query routing
-│   ├── tools.py           # Tools (calculator, outline, retrieval)
-│   └── workflow.py        # Main agent pipeline
+│ ├── llm.py # OpenAI client
+│ ├── memory.py # Conversation memory
+│ ├── prompts.py # Prompt templates
+│ ├── router.py # Query routing
+│ ├── tools.py # Tools (calculator, outline, retrieval)
+│ └── workflow.py # Main agent pipeline
 │
 ├── rag/
-│   ├── ingest.py          # Document loading & chunking
-│   ├── retrieve.py        # Retrieval logic
-│   └── index.py           # (reserved for future vector index)
+│ ├── ingest.py # Document loading & chunking
+│ ├── retrieve.py # Retrieval logic
+│ └── index.py # (reserved for future vector index)
 │
 ├── utils/
-│   ├── calculator.py      # Safe math evaluation
-│   ├── file_utils.py      # File handling
-│   ├── logging_utils.py   # Debug logging
-│   ├── prompt_utils.py    # Prompt helpers
-│   └── text_utils.py      # Text processing
+│ ├── calculator.py # Safe math evaluation
+│ ├── file_utils.py # File handling
+│ ├── logging_utils.py # Debug logging
+│ ├── prompt_utils.py # Prompt helpers
+│ └── text_utils.py # Text processing
 │
 ├── data/
-│   ├── uploads/           # Uploaded files
-│   └── kb/                # (optional knowledge base)
-
+│ ├── uploads/ # Uploaded files
+│ └── kb/ # (optional knowledge base)
+```
 ---
 
-## ⚙️ Installation
+## Installation
 
 1. Clone repository
 
@@ -108,7 +108,7 @@ OPENAI_API_KEY=your_api_key_here
 
 ---
 
-## ▶️ Usage
+## Usage
 
 Start the app:
 
@@ -121,7 +121,7 @@ Then open the browser and:
 
 ---
 
-## 💡 Example Queries
+## Example Queries
 
 General QA:
 - What is machine learning?
@@ -140,7 +140,7 @@ Calculator:
 
 ---
 
-## 🛠️ Future Improvements
+## Future Improvements
 
 - Vector database (FAISS / Chroma)
 - Embedding-based retrieval
@@ -150,6 +150,6 @@ Calculator:
 
 ---
 
-## 📄 License
+## License
 
 MIT License

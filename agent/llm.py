@@ -17,8 +17,11 @@ class LLMClient:
         else:
             full_input = prompt
 
-        response = self.client.responses.create(
+        response = self.client.chat.completions.create(
             model=self.model,
-            input=full_input,
+            messages=[
+                {"role": "system", "content": system_prompt} if system_prompt else None,
+                {"role": "user", "content": full_input}
+            ]
         )
-        return response.output_text
+        return response.choices[0].message.content
