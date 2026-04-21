@@ -6,33 +6,26 @@ A lightweight General QA Agent powered by LLM, supporting document-grounded QA, 
 
 ## Features
 
-- General Question Answering  
-  Answer common knowledge questions.
+- General Question Answering : Answer common knowledge questions.
 
-- Document QA (RAG)  
-  Upload PDF / TXT / Markdown and ask questions based on document content.
+- Document QA (RAG) : Upload PDF / TXT / Markdown and ask questions based on document content.
 
-- Document Summarization  
-  Automatically generate summaries for uploaded documents.
+- Document Summarization : Automatically generate summaries for uploaded documents.
 
-- Outline Generation  
-  Generate structured outlines for a given topic.
+- Outline Generation : Generate structured outlines for a given topic.
 
-- Tool-Augmented Reasoning  
-  Includes:
+- Tool-Augmented Reasoning :
   - Calculator (safe evaluation)
   - Outline generator
   - Retrieval tool
 
-- Routing System  
-  Automatically dispatch queries to:
+- Routing System : Automatically dispatch queries to appropriate tools or LLM reasoning based on intent.
   - General QA
   - Document QA
   - Calculator
   - Outline generator
 
-- Multi-turn Memory  
-  Maintains conversation history for contextual responses.
+- Multi-turn Memory : Maintains conversation history for contextual responses.
 
 ---
 
@@ -96,7 +89,7 @@ QAgent/
 1. Clone repository
    
 ```
-git clone <your-repo-url>
+git clone <repo-url>
 cd QAgent
 ```
 
@@ -117,7 +110,9 @@ OPENAI_API_KEY=your_api_key_here
 
 Start the app:
 
+```
 streamlit run app.py
+```
 
 Then open the browser and:
 
