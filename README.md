@@ -37,7 +37,7 @@ A lightweight General QA Agent powered by LLM, supporting document-grounded QA, 
 ---
 
 ## System Architecture
-
+```
 User Query
    ↓
 Router (intent classification)
@@ -49,11 +49,13 @@ LLM Reasoning
 Memory Update
    ↓
 Final Answer
+```
 
 With optional RAG pipeline:
 
+```
 Query → Retrieve → Context → LLM → Answer
-
+```
 ---
 
 ## Project Structure
@@ -92,20 +94,23 @@ QAgent/
 ## Installation
 
 1. Clone repository
-
+   
+```
 git clone <your-repo-url>
 cd QAgent
+```
 
 2. Install dependencies
 
+```
 pip install -r requirements.txt
+```
 
 3. Set environment variables
 
-Create a .env file:
-
+```
 OPENAI_API_KEY=your_api_key_here
-
+```
 ---
 
 ## Usage
