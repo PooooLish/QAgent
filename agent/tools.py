@@ -1,25 +1,7 @@
+from agent.router import is_summary_query
 from rag.retrieve import retrieve_chunks
 from utils.calculator import calculator as safe_calculator
 from utils.text_utils import truncate_text
-
-
-SUMMARY_KEYWORDS = [
-    "介绍",
-    "总结",
-    "概述",
-    "主要内容",
-    "讲什么",
-    "说了什么",
-    "摘要",
-]
-
-
-def is_summary_query(query: str) -> bool:
-    query = query.strip().lower()
-    if not query:
-        return False
-
-    return any(keyword in query for keyword in SUMMARY_KEYWORDS)
 
 
 def calculator(expr: str) -> str:
