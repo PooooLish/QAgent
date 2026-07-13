@@ -30,7 +30,7 @@ def safe_eval(expr: str) -> float:
 
 
 def calculator(expr: str) -> str:
-    expr = expr.replace("计算", "").strip()
+    expr = expr.replace("计算", "").replace("^", "**").strip()
 
     try:
         result = safe_eval(expr)
