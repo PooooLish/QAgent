@@ -1,155 +1,210 @@
 # QAgent
 
-A lightweight General QA Agent powered by LLM, supporting document-grounded QA, multi-turn conversation, and tool-augmented reasoning.
+[English](README.md) | [简体中文](README.zh-CN.md)
 
----
+QAgent is a lightweight Chinese-oriented Chatbot prototype powered by an LLM. It combines deterministic intent routing, simple tools, short in-memory conversation history, and basic document-grounded question answering.
 
-## Features
+> QAgent is not yet an autonomous Agent. The current program executes one predefined route per request; it does not let the model plan multiple steps, choose arbitrary tools, pause for approval, or resume long-running tasks.
 
-- General Question Answering : Answer common knowledge questions.
+## Project Status
 
-- Document QA (RAG) : Upload PDF / TXT / Markdown and ask questions based on document content.
+QAgent is a work-in-progress learning and experimentation project. It is suitable for local demonstrations and architecture experiments, but it is not a production-ready, multi-user service.
 
-- Document Summarization : Automatically generate summaries for uploaded documents.
+The name **QAgent** is retained as a possible future direction. It does not claim that the current implementation already has autonomous Agent capabilities.
 
-- Outline Generation : Generate structured outlines for a given topic.
+## Current Capabilities
 
-- Tool-Augmented Reasoning :
-  - Calculator (safe evaluation)
-  - Outline generator
-  - Retrieval tool
+- General Chinese-oriented LLM question answering.
+- PDF, TXT, and Markdown document upload and text extraction.
+- Basic document QA and document summarization.
+- Safe arithmetic through a restricted Python AST evaluator.
+- LLM-based explanations for derivatives, integrals, and limits.
+- Fixed-template outline generation.
+- Short in-memory conversation history.
+- Streamlit chat interface with route and retrieval details.
 
-- Routing System : Automatically dispatch queries to appropriate tools or LLM reasoning based on intent.
-  - General QA
-  - Document QA
-  - Calculator
-  - Outline generator
+## Why This Is Not Yet an Agent
 
-- Multi-turn Memory : Maintains conversation history for contextual responses.
+The current program is a tool-augmented Chatbot with deterministic routing. Application code—not the model—selects one branch for each request.
 
----
+It does not currently provide:
 
-## System Architecture
+- model-driven tool selection;
+- multi-step planning or a tool execution loop;
+- dynamic replanning after observing tool results;
+- human approval for high-risk actions;
+- persistent task state, pause/resume, or failure recovery;
+- execution budgets, maximum steps, or tool permissions.
+
+## Architecture
+
+```text
+User input
+  ↓
+Streamlit UI and session state
+  ↓
+Keyword-based Router
+  ↓
+One predefined workflow branch
+  ├─ calculator
+  ├─ math explanation
+  ├─ outline generator
+  ├─ document QA
+  └─ general QA
+  ↓
+LLM response
+  ↓
+Memory and UI update
 ```
-User Query
-   ↓
-Router (intent classification)
-   ↓
-Tool Selection
-   ↓
-LLM Reasoning
-   ↓
-Memory Update
-   ↓
-Final Answer
+
+Every workflow branch returns the same result contract:
+
+```python
+{
+    "route": str,
+    "answer": str,
+    "retrieval_mode": str,
+    "retrieved_chunks": list[str],
+}
 ```
 
-With optional RAG pipeline:
+## Current Router Rules
 
+Rules are evaluated in this exact order:
+
+| Priority | Condition | Route |
+|---:|---|---|
+| 1 | Contains `计算` or `+`, `-`, `*`, `/`, `^` | `calculator` |
+| 2 | Contains `积分`, `导数`, or `极限` | `math` |
+| 3 | Contains `提纲` or `outline` | `outline` |
+| 4 | A document is loaded and the query matches summary keywords | `document_qa` |
+| 5 | A document is loaded and the query contains `pdf` or `文档` | `document_qa` |
+| 6 | Everything else | `general_qa` |
+
+This design is fast, transparent, and easy to test, but it is sensitive to missing keywords, ambiguous queries, and paraphrases.
+
+## Current RAG Pipeline
+
+```text
+PDF/TXT/Markdown
+  → text extraction
+  → fixed-size character chunks
+  → character/keyword scoring
+  → context truncation
+  → LLM answer
 ```
-Query → Retrieve → Context → LLM → Answer
-```
----
+
+The Streamlit upload flow calls `chunk_text(text, chunk_size=800, overlap=120)`. Retrieval is lexical: it scores exact query matches, Chinese character overlap, or whitespace-separated English terms. It is not embedding-based semantic retrieval.
+
+Current RAG limitations:
+
+- chunks are plain strings without source, page, section, or stable IDs;
+- PDF page metadata is not retained;
+- answers do not include citations;
+- there is no BM25, embedding model, vector database, hybrid retrieval, or reranker;
+- `rag/index.py` is currently empty;
+- retrieval quality is not yet measured with an evaluation dataset.
 
 ## Project Structure
-```
+
+```text
 QAgent/
-├── app.py # Streamlit UI
-├── requirements.txt # Dependencies
-├── README.md
-│
+├── app.py                  # Streamlit UI and session orchestration
 ├── agent/
-│ ├── llm.py # OpenAI client
-│ ├── memory.py # Conversation memory
-│ ├── prompts.py # Prompt templates
-│ ├── router.py # Query routing
-│ ├── tools.py # Tools (calculator, outline, retrieval)
-│ └── workflow.py # Main agent pipeline
-│
+│   ├── llm.py              # OpenAI client and message construction
+│   ├── memory.py           # Short in-memory message history
+│   ├── prompts.py          # Prompt builders
+│   ├── router.py           # Deterministic intent routing
+│   ├── tools.py            # Calculator, outline, and RAG context tools
+│   └── workflow.py         # Main routed workflow
 ├── rag/
-│ ├── ingest.py # Document loading & chunking
-│ ├── retrieve.py # Retrieval logic
-│ └── index.py # (reserved for future vector index)
-│
-├── utils/
-│ ├── calculator.py # Safe math evaluation
-│ ├── file_utils.py # File handling
-│ ├── logging_utils.py # Debug logging
-│ ├── prompt_utils.py # Prompt helpers
-│ └── text_utils.py # Text processing
-│
-├── data/
-│ ├── uploads/ # Uploaded files
-│ └── kb/ # (optional knowledge base)
+│   ├── ingest.py           # Document extraction and chunking
+│   ├── retrieve.py         # Lexical retrieval
+│   └── index.py            # Empty placeholder; no vector index yet
+├── utils/                  # Calculator, temporary files, and helpers
+├── tests/                  # Offline unit and regression tests
+├── requirements.txt        # Runtime dependencies
+├── requirements-dev.txt    # Runtime dependencies plus pytest
+└── pytest.ini              # Test discovery configuration
 ```
----
 
 ## Installation
 
-1. Clone repository
-   
-```
-git clone <repo-url>
+Python 3.10 or newer is recommended.
+
+```powershell
+git clone https://github.com/PooooLish/QAgent.git
 cd QAgent
+python -m pip install -r requirements-dev.txt
 ```
 
-2. Install dependencies
+For runtime-only installation, use `requirements.txt` instead.
 
-```
-pip install -r requirements.txt
-```
+## Configuration
 
-3. Set environment variables
+Set `OPENAI_API_KEY` in the current process environment before starting the application. Never commit the real value to Git.
 
-```
-OPENAI_API_KEY=your_api_key_here
-```
----
+The current default model is `gpt-4o-mini`, configured when `GeneralQAAgent` is created in `app.py`.
 
-## Usage
+`Memory(max_turns=8)` retains the last eight messages, not eight complete user/assistant turns. Conversation state is not persisted across process restarts.
 
-Start the app:
+## Usage and Example Queries
 
-```
+Start the application:
+
+```powershell
 streamlit run app.py
 ```
 
-Then open the browser and:
+Examples:
 
-1. Upload a document (optional)
-2. Ask questions in the chat interface
+- General QA: `什么是机器学习？`
+- Document QA: upload a file, then ask `这个文档的主要结论是什么？`
+- Summary: `总结这份文档的主要内容`
+- Outline: `生成一个深度学习学习提纲`
+- Calculator: `计算 2^10 + 24`
+- Math: `解释 x² 的导数`
 
----
+## Tests
 
-## Example Queries
+The repository contains 7 test files and 17 offline tests. They cover routing, calculator safety, chunking, lexical retrieval, LLM message construction, math workflow results, and temporary-file cleanup.
 
-General QA:
-- What is machine learning?
+```powershell
+$env:PYTHONDONTWRITEBYTECODE = "1"
+python -m pytest
+```
 
-Document QA:
-- What is the main idea of this paper?
+The tests do not make real OpenAI API calls or start a Streamlit browser. They verify implemented behavior, not answer or retrieval quality.
 
-Summarization:
-- Summarize this document
+## Current Limitations
 
-Outline:
-- Generate an outline for deep learning
+- Keyword routing can misclassify paraphrases and mixed-intent queries.
+- Document questions may miss RAG unless they include recognized document keywords.
+- Retrieval is lexical rather than semantic.
+- Responses have no source citations or grounding score.
+- Conversation and document state are memory-only.
+- There is no streaming, retry, timeout, cancellation, token accounting, or observability.
+- Uploaded files have no production-grade size, page-count, MIME, or parsing-time limits.
+- There is no user authentication, authorization, or multi-user data isolation.
+- There is no real Agent loop or autonomous multi-tool execution.
 
-Calculator:
-- Calculate 2^10 + 24
+## Recommended Evolution Path
 
----
+1. Introduce structured chunks with source, page, section, and stable IDs.
+2. Add grounded citations and explicit insufficient-evidence responses.
+3. Build a small retrieval evaluation dataset and record Recall@k and MRR.
+4. Compare the current lexical baseline with BM25, vector, and hybrid retrieval.
+5. Add persistence, streaming, timeouts, retries, and basic observability.
+6. Add a controlled Agent tool loop only when real multi-step use cases require it.
 
-## Future Improvements
+## Security and Privacy
 
-- Vector database (FAISS / Chroma)
-- Embedding-based retrieval
-- Web search integration
-- Code execution tool
-- Multi-modal support
-
----
+- Do not commit API keys, `.env` files, uploaded documents, logs, caches, or private local documentation.
+- Treat uploaded document text as untrusted input.
+- Do not execute model-generated code directly.
+- Keep tests offline and use non-private fixtures.
+- Add file limits, user isolation, tool permissions, and audit logging before production use.
 
 ## License
 
-MIT License
+This repository currently does not include a `LICENSE` file. Do not assume that the code is licensed under MIT or another open-source license until the project owner adds an explicit license.
