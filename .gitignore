@@ -27,3 +27,6 @@ data/uploads/*
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Private local documentation
+docs/private/
