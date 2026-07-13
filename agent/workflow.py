@@ -66,6 +66,13 @@ class GeneralQAAgent:
         """
             answer = self.llm.generate(prompt, SYSTEM_PROMPT)
 
+            return {
+                "route": route,
+                "answer": answer,
+                "retrieval_mode": "none",
+                "retrieved_chunks": [],
+            }
+
         else:
             prompt = build_general_prompt(query, history_text)
             answer = self.llm.generate(prompt, SYSTEM_PROMPT)
