@@ -8,21 +8,24 @@ Work in progress. The repository contains a Streamlit QA prototype with general 
 
 Establish a maintainable engineering baseline before repairing application behavior.
 
-## Known issues
+## Completed fixes
 
-- The math workflow branch does not return a result.
-- Document summary requests are not routed to document QA unless the query explicitly mentions a PDF or document.
-- LLM message construction can include an invalid `None` message and duplicates the system prompt.
-- The README calculator example uses `^`, which the calculator does not support as exponentiation.
-- Uploaded temporary files are not removed after ingestion.
-- The reserved vector index module is empty.
+- Math workflow returns a complete result dictionary.
+- Document summary requests use document QA when a document is loaded.
+- LLM requests contain only valid, non-duplicated messages.
+- The calculator accepts the documented `^` exponent syntax.
+- Uploaded temporary files are removed after successful or failed parsing.
+
+## Remaining work
+
+- Implement and evaluate the reserved vector index only when semantic retrieval becomes a confirmed requirement.
+- Add end-to-end Streamlit coverage when a stable UI contract is defined.
 
 ## Current phase completion criteria
 
-- Task-local rules and status documentation exist.
-- Generated Python files and private local data are ignored.
-- Offline characterization tests cover routing, calculation, chunking, and retrieval.
-- Python bytecode is no longer tracked by Git.
+- Every repaired defect has an offline regression test.
+- All offline tests pass without API calls.
+- Python bytecode, uploaded documents, secrets, logs, and temporary files remain untracked.
 
 ## Verification commands
 
@@ -34,4 +37,4 @@ git status --short
 
 ## Next phase
 
-Repair each known behavior issue with a failing regression test followed by the smallest implementation change.
+Evaluate retrieval quality and decide whether the reserved vector index is necessary.
