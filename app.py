@@ -1,8 +1,8 @@
 import streamlit as st
-import tempfile
-from rag.ingest import load_document_text, chunk_text
+from rag.ingest import chunk_text
 from agent.workflow import GeneralQAAgent
 from agent.memory import Memory
+from utils.file_utils import load_uploaded_document
 
 import re
 
@@ -43,13 +43,7 @@ uploaded_file = st.file_uploader("上传文档（目前支持 PDF / TXT / MD）"
 
 if uploaded_file is not None:
     if st.session_state.doc_name != uploaded_file.name:
-        suffix = "." + uploaded_file.name.split(".")[-1].lower()
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
-            tmp_file.write(uploaded_file.read())
-            tmp_path = tmp_file.name
-
-        text = load_document_text(tmp_path)
+        text = load_uploaded_document(uploaded_file)
 
         if not text.strip():
             st.error("无法从文件中提取文本。")
