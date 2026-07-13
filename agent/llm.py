@@ -2,6 +2,16 @@ import os
 from openai import OpenAI
 
 
+def build_messages(
+    prompt: str, system_prompt: str | None = None
+) -> list[dict[str, str]]:
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
+    return messages
+
+
 class LLMClient:
     def __init__(self, model: str = "gpt-4o-mini"):
         api_key = os.getenv("OPENAI_API_KEY")
@@ -12,16 +22,8 @@ class LLMClient:
         self.model = model
 
     def generate(self, prompt: str, system_prompt: str | None = None) -> str:
-        if system_prompt:
-            full_input = f"{system_prompt}\n\n{prompt}"
-        else:
-            full_input = prompt
-
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {"role": "system", "content": system_prompt} if system_prompt else None,
-                {"role": "user", "content": full_input}
-            ]
+            messages=build_messages(prompt, system_prompt),
         )
         return response.choices[0].message.content
