@@ -74,14 +74,13 @@ Rules are evaluated in this exact order:
 
 | Priority | Condition | Route |
 |---:|---|---|
-| 1 | Contains `计算` or `+`, `-`, `*`, `/`, `^` | `calculator` |
-| 2 | Contains `积分`, `导数`, or `极限` | `math` |
-| 3 | Contains `提纲` or `outline` | `outline` |
-| 4 | A document is loaded and the query matches summary keywords | `document_qa` |
-| 5 | A document is loaded and the query contains `pdf` or `文档` | `document_qa` |
-| 6 | Everything else | `general_qa` |
+| 1 | Contains `积分`, `导数`, or `极限` | `math` |
+| 2 | Becomes a valid arithmetic expression after optional calculation wording is removed | `calculator` |
+| 3 | A document is loaded and the query contains summary, explicit document, or document-reference terms | `document_qa` |
+| 4 | Contains `提纲` or `outline` | `outline` |
+| 5 | Everything else | `general_qa` |
 
-This design is fast, transparent, and easy to test, but it is sensitive to missing keywords, ambiguous queries, and paraphrases.
+The calculator rule requires both a number and an arithmetic operator. A standalone `/` or `-`, URLs, dates such as `2026-07-13`, version numbers, and prose containing those characters do not trigger it. This design is fast, transparent, and easy to test, but it remains sensitive to missing keywords, ambiguous queries, and paraphrases.
 
 ## Current RAG Pipeline
 
